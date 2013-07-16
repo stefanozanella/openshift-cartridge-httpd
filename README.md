@@ -3,8 +3,7 @@
 This is a minimal cartridge for OpenShift that just configures the available
 Apache server so it can be run as the current user.
 
-The `html` dir inside the root of your application will be the `DocumentRoot`
-(indexing not allowed, btw).
+The root of your application will be the `DocumentRoot` (indexing not allowed, btw).
 
 To use the cartridge in OpenShift Express, insert the following URL when asked
 to select cartridge to use:

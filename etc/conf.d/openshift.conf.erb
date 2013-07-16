@@ -1,5 +1,5 @@
 ServerRoot "<%= ENV['OPENSHIFT_HTTPD_DIR'] %>"
-DocumentRoot "<%= "#{ENV['OPENSHIFT_REPO_DIR']}/html" %>"
+DocumentRoot "<%= "#{ENV['OPENSHIFT_REPO_DIR']}" %>"
 Listen <%= "#{ENV['OPENSHIFT_HTTPD_IP']}:#{ENV['OPENSHIFT_HTTPD_PORT']}" %>
 
 User  <%= ENV['OPENSHIFT_GEAR_UUID'] %>
@@ -14,7 +14,7 @@ DefaultRuntimeDir "<%= "#{ENV['OPENSHIFT_HTTPD_DIR']}/run"%>"
 
 DirectoryIndex index.html
 
-<Directory "<%= "#{ENV['OPENSHIFT_REPO_DIR']}/html" %>">
+<Directory "<%= "#{ENV['OPENSHIFT_REPO_DIR']}" %>">
   AllowOverride All
 </Directory>
 
