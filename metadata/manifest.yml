@@ -5,7 +5,7 @@ Description: "A HTTPD cartridge for basic OpenShift usage."
 Version: '0.1'
 License: ASL 2.0
 Vendor: Stefano Zanella
-Cartridge-Version: 0.0.1
+Cartridge-Version: 0.0.2
 Cartridge-Vendor: stefanozanella
 Categories:
   - service
