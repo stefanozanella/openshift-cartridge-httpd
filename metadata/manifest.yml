@@ -1,0 +1,41 @@
+Name: httpd
+Cartridge-Short-Name: HTTPD 
+Display-Name: HTTPD Cartridge
+Description: "A HTTPD cartridge for basic OpenShift usage."
+Version: '0.1'
+License: ASL 2.0
+Vendor: Stefano Zanella
+Cartridge-Version: 0.0.1
+Cartridge-Vendor: stefanozanella
+Categories:
+  - service
+  - web_framework
+Provides:
+  - "httpd"
+Group-Overrides:
+  - components:
+    - httpd
+Publishes:
+  publish-http-url:
+    Type: "NET_TCP:httpd-proxy-info"
+  publish-gear-endpoint:
+    Type: "NET_TCP:gear-endpoint-info"
+Subscribes:
+  set-db-connection-info:
+    Type: "ENV:NET_TCP:db:connection-info"
+    Required: false
+  set-nosql-db-connection-info:
+    Type: "ENV:NET_TCP:nosqldb:connection-info"
+    Required: false
+Endpoints:
+  - Private-IP-Name:   IP
+    Private-Port-Name: PORT
+    Private-Port:      8080
+    Public-Port-Name:  PROXY_PORT
+    Mappings:
+      - Frontend:      ""
+        Backend:       ""
+        Options:       { websocket: true }
+Scaling:
+  Min: 1
+  Max: -1

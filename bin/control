@@ -1,0 +1,79 @@
+#!/bin/bash -e
+
+source $OPENSHIFT_CARTRIDGE_SDK_BASH
+
+HTTPD_CFG_FILE=$OPENSHIFT_HTTPD_DIR/etc/conf/httpd.conf
+HTTPD_CFG_DIR=$OPENSHIFT_HTTPD_DIR/etc/conf.d
+HTTPD_PID_FILE=$OPENSHIFT_HTTPD_DIR/run/httpd.pid
+
+function apache() {
+    client_message "$2 Apache HTTPD server"
+    [ "$1" != "stop" ] && update_httpd_passenv $HTTPD_CFG_FILE
+    ensure_valid_httpd_process "$HTTPD_PID_FILE" "$HTTPD_CFG_FILE"
+    /usr/sbin/httpd -f $HTTPD_CFG_FILE -k $1
+    return $?
+}
+
+function stop() {
+    client_message "Stopping Apache HTTPD server"
+    ensure_valid_httpd_process "$HTTPD_PID_FILE" "$HTTPD_CFG_FILE"
+    if [ -f "$HTTPD_PID_FILE" ]; then
+        httpd_pid=`cat "$HTTPD_PID_FILE" 2> /dev/null`
+    fi
+    /usr/sbin/httpd -f $HTTPD_CFG_FILE -k stop
+    wait_for_stop $httpd_pid
+}
+
+function configtest() {
+    client_message "Testing Apache *.conf files"
+    /usr/sbin/httpd -f $HTTPD_CFG_FILE -t
+    return $?
+}
+
+function status() {
+   if output=$(curl http://$OPENSHIFT_HTTPD_IP:$OPENSHIFT_HTTPD_PORT/server-status?auto 2>&1 )
+   then
+      client_result "Application is running"
+      client_result $output
+      return 0
+   else
+      client_result "Application is either stopped or inaccessible"
+      # FIXME: We should return 1 once we can handle non-zero return statuses
+      #        (This should be possible after we remove the v1 logic completely)
+      return 0
+   fi
+}
+
+function tidy() {
+    client_message "Emptying log dir: $OPENSHIFT_HTTPD_LOG_DIR"
+    shopt -s dotglob
+    rm -rf $OPENSHIFT_HTTPD_LOG_DIR/*
+    return 0
+}
+
+function nothing { 
+  :
+}
+
+case "$1" in
+  start)                apache start "Starting" ;;
+  restart)              apache restart "Restarting" ;;
+  reload|graceful)      apache graceful "Restarting gracefully" ;;
+  stop)                 stop ;;
+  status)               status ;;
+  configtest)           configtest ;;
+  tidy)                 tidy ;;
+  pre-build)            nothing ;;
+  build)                nothing ;;
+  deploy)               nothing ;;
+  post-deploy)          nothing ;;
+  pre-snapshot)         nothing ;;
+  post-snapshot)        nothing ;;
+  pre-restore)          nothing ;;
+  post-restore)         nothing ;;
+  pre-repo-archive)     nothing ;;
+  update-configuration) nothing ;;
+  *)                    exit 0
+esac
+
+exit $?

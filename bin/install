@@ -1,0 +1,5 @@
+#!/bin/bash -eu
+
+rm -f $OPENSHIFT_HTTPD_DIR/modules $OPENSHIFT_HTTPD_DIR/etc/conf/magic
+ln -s /usr/lib64/httpd/modules $OPENSHIFT_HTTPD_DIR/modules
+ln -s /etc/httpd/conf/magic $OPENSHIFT_HTTPD_DIR/etc/conf/magic
